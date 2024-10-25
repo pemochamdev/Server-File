@@ -3,7 +3,7 @@ from usersauths.models import CustomUser
 import uuid
 
 class FileMeta(models.Model):
-    id = models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
+    id = models.UUIDField(primary_key=True,default=uuid.uuid4(),editable=False)
     user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True)
     filename = models.CharField(max_length=255)
     chunk_number = models.IntegerField()
@@ -21,7 +21,7 @@ class FileMeta(models.Model):
 
 
 class UploadeFile(models.Model):
-  id = models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
+  id = models.UUIDField(primary_key=True,default=uuid.uuid4(),editable=False)
   author = models.ForeignKey(CustomUser, on_delete=models.CASCADE,related_name='uploadefile')
   file_name = models.CharField(max_length=255)
   file_path = models.CharField(max_length=512)

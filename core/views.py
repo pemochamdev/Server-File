@@ -3,10 +3,16 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from core.utils import combine_chunks
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated,AllowAny
 from .models import FileMeta
 from core.serializers import FileMetaSerializer
+from django.contrib.auth import get_user_model
 from django.conf import settings
+from rest_framework import generics
+from rest_framework_simplejwt.views import TokenObtainPairView,TokenVerifyView
+from core.serializers import CustomTokenObtainPairSerializer,UserSerializer
+
+User = get_user_model()
 
 class InitializeUploadView(APIView):
     permission_classes = [IsAuthenticated]
@@ -37,6 +43,7 @@ class InitializeUploadView(APIView):
                     'is_complete': False
                 }
             )
+            print(upload_state)
 
             if not created:
                 upload_state.total_chunks = total_chunks
@@ -142,3 +149,15 @@ class UploadChunkView(APIView):
             return Response({"error": "Upload non trouvé."}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({'message': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+from rest_framework_simplejwt.views import TokenObtainPairView
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
+    
+    
+class UserCreationView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [ AllowAny ]

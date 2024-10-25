@@ -3,24 +3,27 @@ import os
 import uuid
 
 # Configuration des informations d'authentification et d'upload
-username = 'admin@gmail.com'
+email = 'pmc@gmail.com'
 password = 'pmc'
 url_token = 'http://localhost:8000/api-auth/token/'
 url_initialize_upload = 'http://localhost:8000/api/initialize-upload/'  # URL pour initialiser l'upload
 url_upload_chunk = 'http://localhost:8000/api/upload-chunk/'  # URL pour uploader les chunks
 
 # Étape 1: Obtenir le token d'authentification
-response_token = requests.post(url_token, data={'username': username, 'password': password})
+# response_token = requests.post(url_token, data={'email': email, 'password': password})
+response_token = requests.post(url_token, data={'email': email, 'password': password})
 
 if response_token.status_code == 200:
-    token = response_token.json().get('token')
-    print(f"Token obtenu : {token}")
+    
+    access_token = response_token.json().get('access')  # Utilisez 'access' pour obtenir le token
+    print(f"Token obtenu : {access_token}")
 
     # Étape 2: Initialiser l'upload
-    filename = 'typescript-fr.pdf'
+    filename = 'modele.png'
     total_chunks = 10
-    path_to_file = r"C:\Users\PEMOCHAMDEV\Desktop\typescript-fr.pdf"
+    path_to_file = r"c:\Users\PEMOCHAMDEV\Pictures\modele.png"
     file_size = os.path.getsize(path_to_file)
+    print(file_size)
     chunk_size = file_size // total_chunks
 
     with open(path_to_file, 'rb') as file:
@@ -31,7 +34,7 @@ if response_token.status_code == 200:
         }
 
         headers = {
-            'Authorization': f'Token {token}'
+            'Authorization': f'Bearer {access_token}'
         }
 
         response_initialize = requests.post(url_initialize_upload, data=data_initialize, headers=headers)
